@@ -1,15 +1,16 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:movie_app/src/constants/api_path.dart';
 import 'package:movie_app/src/models/movie_model.dart';
 
 class MoviesProvider {
-  String _apiKey = "19eb744668a458ec1290b5276562cb16";
-  String _url = "api.themoviedb.org";
+  String _apiKey = API_KEY;
+  String _url = API;
   String _language = "es-ES";
 
   Future<List<Movie>> getMovieNowPlaying() async {
-    final url = Uri.https(_url, "3/movie/now_playing",
+    final url = Uri.https(_url, NOW_PLAYING,
         {"api_key": _apiKey, "language": _language});
 
     final response = await http.get(url);
@@ -24,7 +25,7 @@ class MoviesProvider {
   }
 
   Future<List<Movie>> getPopular() async {
-    final url = Uri.https(_url, "3/movie/popular",
+    final url = Uri.https(_url, POPULAR,
         {"api_key": _apiKey, "language": _language});
 
     final response = await http.get(url);

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:movie_app/src/constants/api_path.dart';
+import 'package:movie_app/src/models/actors_model.dart';
 import 'package:movie_app/src/models/movie_model.dart';
 
 class MoviesProvider {
@@ -26,8 +27,8 @@ class MoviesProvider {
   }
 
   Future<List<Movie>> getMovieNowPlaying() async {
-    final url = Uri.https(_url, NOW_PLAYING,
-        {"api_key": _apiKey, "language": _language});
+    final url = Uri.https(
+        _url, NOW_PLAYING, {"api_key": _apiKey, "language": _language});
 
     final response = await http.get(url);
 
@@ -41,15 +42,17 @@ class MoviesProvider {
   }
 
   Future<List<Movie>> getPopular() async {
-
-    if(_loading) return [];
+    if (_loading) return [];
 
     _loading = true;
 
     _popularsPage++;
 
-    final url = Uri.https(_url, POPULAR,
-        {"api_key": _apiKey, "language": _language, "page": _popularsPage.toString()});
+    final url = Uri.https(_url, POPULAR, {
+      "api_key": _apiKey,
+      "language": _language,
+      "page": _popularsPage.toString()
+    });
 
     final response = await http.get(url);
 
@@ -63,7 +66,37 @@ class MoviesProvider {
       _loading = false;
 
       return movies.items;
+    } else {
+      return [];
+    }
+  }
 
+  Future<List<Actor>> getCast(String movieId) async {
+    final url = Uri.https(_url, '3/movie/$movieId/credits',
+        {"api_key": _apiKey, "language": _language});
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final decodedData = json.decode(response.body);
+      final cast = new Cast.fromJsonList(decodedData['cast']);
+
+      return cast.actors;
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<Movie>> searchMovie(String query) async {
+    final url = Uri.https(_url, '3/search/movie',
+        {"api_key": _apiKey, "language": _language, "query": query});
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final decodedData = json.decode(response.body);
+      final movies = new Movies.fromJsonList(decodedData['results']);
+      return movies.items;
     } else {
       return [];
     }

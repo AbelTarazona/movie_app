@@ -19,6 +19,23 @@ class MovieHorizontal extends StatelessWidget {
           _pageController.position.maxScrollExtent - 200) {
         nextPage();
       }
+
+      if (_pageController.position.pixels ==
+          _pageController.position.maxScrollExtent) {
+        _pageController.position.animateTo(
+          _pageController.position.maxScrollExtent - _screenSize.width * 0.35,
+          duration: Duration(milliseconds: 1000),
+          curve: Curves.elasticOut,
+        );
+      }
+      if (_pageController.position.pixels ==
+          _pageController.position.minScrollExtent) {
+        _pageController.position.animateTo(
+          _screenSize.width * 0.3,
+          duration: Duration(milliseconds: 1000),
+          curve: Curves.elasticOut,
+        );
+      }
     });
 
     return Container(
@@ -33,19 +50,26 @@ class MovieHorizontal extends StatelessWidget {
   }
 
   Widget _card(BuildContext context, Movie movie) {
-    return Container(
+
+    movie.uniqueId = '${movie.id}-poster';
+
+
+    final card = Container(
       margin: EdgeInsets.only(right: 15.0),
       child: Column(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
-            child: FadeInImage(
-              placeholder: AssetImage('assets/img/no-image.jpg'),
-              image: NetworkImage(
-                movie.getPosterImg(),
+          Hero(
+            tag: movie.uniqueId,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: FadeInImage(
+                placeholder: AssetImage('assets/img/no-image.jpg'),
+                image: NetworkImage(
+                  movie.getPosterImg(),
+                ),
+                fit: BoxFit.cover,
+                height: 160.0,
               ),
-              fit: BoxFit.cover,
-              height: 160.0,
             ),
           ),
           SizedBox(
@@ -58,6 +82,13 @@ class MovieHorizontal extends StatelessWidget {
           )
         ],
       ),
+    );
+
+    return GestureDetector(
+      child: card,
+      onTap: () {
+        Navigator.pushNamed(context, 'detail', arguments: movie);
+      },
     );
   }
 

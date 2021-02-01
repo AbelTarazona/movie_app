@@ -13,6 +13,9 @@ class Movies {
 }
 
 class Movie {
+
+  String uniqueId;
+
   bool adult;
   String backdropPath;
   List<int> genreIds;
@@ -48,6 +51,16 @@ class Movie {
 
     if (posterPath != null) {
       return "https://image.tmdb.org/t/p/w500/$posterPath";
+    } else {
+      return 'https://www.cnij.com/wp-content/uploads/2018/09/not-available.jpg';
+    }
+
+  }
+
+  getBackgroundImg() {
+
+    if (backdropPath != null) {
+      return "https://image.tmdb.org/t/p/w500/$backdropPath";
     } else {
       return 'https://www.cnij.com/wp-content/uploads/2018/09/not-available.jpg';
     }
